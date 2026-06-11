@@ -16,16 +16,36 @@ The tool is smartly designed with a dual-mode scanning architecture: it utilizes
   * **Hostname Resolver:** Provides in-depth forward/reverse DNS analysis and looks up aliases for a specific IP.
   * **Port Scanner:** Probes 19 of the most crucial and common network ports (such as SSH, FTP, HTTP, HTTPS, SMB, RDP, etc.) on a targeted host.
   * **Live Network Monitor:** A continuous *watch-mode* feature that automatically detects and alerts you with visual notifications when a new device joins `[+]` or leaves `[-]` the network.
-* **Auto Interface Detection:** Dynamically detects active local subnets and CIDR blocks using `netifaces`[cite: 1].
-* **Data Export:** The latest network audit results can be exported directly into a structured `.csv` file[cite: 1].
-* **High Performance:** Maximizes execution speed across large subnets using `ThreadPoolExecutor` (Multi-threading)[cite: 1].
+* **Auto Interface Detection:** Dynamically detects active local subnets and CIDR blocks using `netifaces`.
+* **Data Export:** The latest network audit results can be exported directly into a structured `.csv` file.
+* **High Performance:** Maximizes execution speed across large subnets using `ThreadPoolExecutor` (Multi-threading).
 
 ---
+## ⚙️ How It Works
+
+* **ScannerWifi** works by identifying your active network interface and mapping the local subnet[cite: 1]. It intelligently switches between two scanning methodologies based on system permissions[cite: 1]:.
+  
+* **ARP Scanning Mode (Sudo/Root)**: Sends standard ARP requests (Ether(dst="ff:ff:ff:ff:ff:ff")/ARP(pdst=cidr)) to the broadcast address[cite: 1]. 
+
+* **It captures ARP replies to instantly map IP and MAC addresses with high accuracy, completely bypassing firewall blocks that drop ICMP packets**[cite: 1].
+
+* **Ping Sweep Mode (Standard User)**: Utilizes ThreadPoolExecutor to concurrently send ICMP echo requests (pings) to all potential hosts in the subnet block[cite: 1]. 
+
+* **It then parses the system's local ARP cache table to retrieve MAC addresses where available**[cite: 1].
+
+## 📋 Interactive Menu Guide
+* **Upon launch**, you will be prompted with a built-in interactive CLI menu[cite: 1]:
+* **Scan entire Wi-Fi network**: Automatically detects your active gateway/subnet and maps all live hosts[cite: 1].
+* **Resolve hostname from IP**: Performs interactive Forward/Reverse DNS lookups and checks device latency[cite: 1].
+* **Scan details of a single IP + ports**: Probes the host and fingerprints 19 common open ports (SSH, HTTP, SMB, RDP, etc.)[cite: 1].
+* **Live network monitor**: Initiates continuous watch-mode to alert you when devices connect [+] or disconnect [-][cite: 1].
+* **Display latest scan results**: Prints the last cached scan table back onto the terminal[cite: 1].
+Save results to a file: Exports all gathered host metrics into a structured .csv file[cite: 1].
 
 ## 🛠️ Technology & Dependencies
 
-* **Python 3.x** — Core programming language[cite: 1].
-* **Scapy** — Network packet manipulation and injection (ARP)[cite: 1].
+* **Python 3.x** — Core programming language.
+* **Scapy** — Network packet manipulation and injection (ARP).
 * **Netifaces** — Network Interface Card (NIC) information gathering[cite: 1].
 * **Tabulate** — Text-based table rendering for a clean and precise CLI layout[cite: 1].
 
@@ -44,3 +64,13 @@ cd scannerwifi
 
 # Install the required dependencies
 pip install scapy netifaces tabulate
+
+# Linux / macOS:
+Bash
+  sudo python3 wifiscanner.py
+
+#Windows (Command Prompt / PowerShell):
+Open your terminal as Administrator, then run:
+Bash
+  python wifiscanner.py
+Note: If executed without root/administrator privileges, the tool will gracefully auto-switch to standard Ping Scan mode[cite: 1].
